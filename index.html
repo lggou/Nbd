@@ -1597,6 +1597,144 @@
       box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
     }
 
+    /* Payment Methods */
+    .payment-method-btn {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 150ms ease-out;
+      width: 100%;
+      text-align: left;
+    }
+
+    .payment-method-btn:hover {
+      border-color: #6366F1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .payment-method-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .payment-method-info {
+      flex: 1;
+    }
+
+    /* Payment Success Animation */
+    .payment-success {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .payment-success-icon {
+      width: 80px;
+      height: 80px;
+      background: #22C55E;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      animation: scaleIn 0.3s ease-out;
+    }
+
+    .payment-success-icon svg {
+      width: 40px;
+      height: 40px;
+      color: white;
+    }
+
+    @keyframes scaleIn {
+      from {
+        transform: scale(0);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .payment-success-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+
+    .payment-success-message {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 24px;
+    }
+
+    /* Payment Records */
+    .payment-record-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .payment-record-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .payment-record-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .payment-record-status {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .payment-record-status.success {
+      background: rgba(34, 197, 94, 0.1);
+      color: #22C55E;
+    }
+
+    .payment-record-status.pending {
+      background: rgba(245, 158, 11, 0.1);
+      color: #F59E0B;
+    }
+
+    .payment-record-amount {
+      font-size: 24px;
+      font-weight: 700;
+      color: #22C55E;
+      margin-bottom: 8px;
+    }
+
+    .payment-record-method {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .payment-record-time {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
     .preview-page .form-field-input::placeholder {
       color: #9ca3af;
     }
@@ -1977,6 +2115,18 @@
                   <div class="field-type">Range</div>
                 </div>
               </div>
+              <div class="field-item" draggable="true" data-type="payment">
+                <div class="field-icon" style="color: var(--success);">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                  </svg>
+                </div>
+                <div class="field-info">
+                  <div class="field-name">付款</div>
+                  <div class="field-type">Payment</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -2058,6 +2208,92 @@
   <div class="preview-page" id="previewPage" style="display: none;">
     <div class="preview-page-form" id="standaloneFormPreview">
       <!-- Form preview will be rendered here -->
+    </div>
+  </div>
+
+  <!-- Payment Modal -->
+  <div class="modal-overlay" id="paymentModal">
+    <div class="modal" style="max-width: 500px;">
+      <div class="modal-header">
+        <h2 class="modal-title" id="paymentModalTitle">选择支付方式</h2>
+        <button class="modal-close" onclick="formBuilder.closePaymentModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body" id="paymentModalBody">
+        <div id="paymentMethodSelection">
+          <div style="text-align: center; margin-bottom: 24px;">
+            <div style="font-size: 14px; color: #6b7280; margin-bottom: 8px;" id="paymentDescription">商品付款</div>
+            <div style="font-size: 32px; font-weight: 700; color: #1a1a1a;" id="paymentAmount">¥100</div>
+          </div>
+          
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <button onclick="formBuilder.selectPaymentMethod('alipay')" class="payment-method-btn">
+              <div class="payment-method-icon" style="background: #1677FF;">
+                <svg viewBox="0 0 24 24" fill="white" width="24" height="24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-6h2v6zm4 0h-2v-6h2v6zm-2-8c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/>
+                </svg>
+              </div>
+              <div class="payment-method-info">
+                <div style="font-size: 15px; font-weight: 600; color: #1a1a1a;">支付宝</div>
+                <div style="font-size: 12px; color: #6b7280;">推荐有支付宝账户的用户使用</div>
+              </div>
+            </button>
+            
+            <button onclick="formBuilder.selectPaymentMethod('wechat')" class="payment-method-btn">
+              <div class="payment-method-icon" style="background: #07C160;">
+                <svg viewBox="0 0 24 24" fill="white" width="24" height="24">
+                  <path d="M8.5 12.5L10.5 14.5L15.5 9.5"/>
+                </svg>
+              </div>
+              <div class="payment-method-info">
+                <div style="font-size: 15px; font-weight: 600; color: #1a1a1a;">微信支付</div>
+                <div style="font-size: 12px; color: #6b7280;">推荐有微信账户的用户使用</div>
+              </div>
+            </button>
+            
+            <button onclick="formBuilder.selectPaymentMethod('card')" class="payment-method-btn">
+              <div class="payment-method-icon" style="background: #6366F1;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="24" height="24">
+                  <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                  <line x1="1" y1="10" x2="23" y2="10"></line>
+                </svg>
+              </div>
+              <div class="payment-method-info">
+                <div style="font-size: 15px; font-weight: 600; color: #1a1a1a;">银行卡</div>
+                <div style="font-size: 12px; color: #6b7280;">支持多种银行卡支付</div>
+              </div>
+            </button>
+          </div>
+        </div>
+        
+        <div id="paymentFormContainer" style="display: none;">
+          <!-- Payment form will be rendered here -->
+        </div>
+      </div>
+      <div class="modal-footer" id="paymentModalFooter" style="display: none;">
+        <button class="btn btn-secondary" onclick="formBuilder.backToPaymentMethods()">返回</button>
+        <button class="btn btn-primary" id="confirmPaymentBtn" onclick="formBuilder.confirmPayment()">确认支付</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payment Records Panel -->
+  <div class="data-panel" id="paymentPanel">
+    <div class="data-header">
+      <h2 class="data-title">支付记录</h2>
+      <button class="property-close" onclick="formBuilder.togglePaymentPanel()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="data-content" id="paymentContent">
+      <!-- Payment records will be rendered here -->
     </div>
   </div>
 
@@ -2367,6 +2603,11 @@
         return submissions.filter(s => s.formId === formId).length;
       }
 
+      getPaymentCount(formId) {
+        const payments = JSON.parse(localStorage.getItem('formPayments') || '[]');
+        return payments.filter(p => p.formId === formId).length;
+      }
+
       loadForms() {
         const saved = localStorage.getItem('forms');
         if (saved) {
@@ -2553,6 +2794,250 @@
         this.selectedFieldId = null;
         this.showAuthPage();
         this.showToast('已安全退出', 'success');
+      }
+
+      // Payment Methods
+      currentPaymentField = null;
+      currentPaymentMethod = null;
+
+      openPaymentModal(fieldId) {
+        const field = this.fields.find(f => f.id === fieldId);
+        if (!field) return;
+
+        this.currentPaymentField = field;
+        const modal = document.getElementById('paymentModal');
+        const description = document.getElementById('paymentDescription');
+        const amount = document.getElementById('paymentAmount');
+
+        description.textContent = field.description || '商品付款';
+        const currencySymbol = field.currency === 'CNY' ? '¥' : (field.currency === 'USD' ? '$' : '€');
+        amount.textContent = `${currencySymbol}${field.amount || 0}`;
+
+        this.resetPaymentModal();
+        modal.classList.add('active');
+      }
+
+      closePaymentModal() {
+        const modal = document.getElementById('paymentModal');
+        modal.classList.remove('active');
+        this.resetPaymentModal();
+      }
+
+      resetPaymentModal() {
+        document.getElementById('paymentMethodSelection').style.display = 'block';
+        document.getElementById('paymentFormContainer').style.display = 'none';
+        document.getElementById('paymentModalFooter').style.display = 'none';
+        document.getElementById('paymentModalTitle').textContent = '选择支付方式';
+        this.currentPaymentMethod = null;
+      }
+
+      selectPaymentMethod(method) {
+        this.currentPaymentMethod = method;
+        const container = document.getElementById('paymentFormContainer');
+        const footer = document.getElementById('paymentModalFooter');
+        const title = document.getElementById('paymentModalTitle');
+        const selection = document.getElementById('paymentMethodSelection');
+
+        selection.style.display = 'none';
+        footer.style.display = 'flex';
+
+        const methodNames = {
+          alipay: '支付宝',
+          wechat: '微信支付',
+          card: '银行卡'
+        };
+
+        title.textContent = methodNames[method] || '支付';
+
+        let formHtml = '';
+        if (method === 'card') {
+          formHtml = `
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              <div class="auth-input-group">
+                <label class="auth-label">持卡人姓名</label>
+                <input type="text" class="auth-input" id="cardName" placeholder="请输入持卡人姓名">
+              </div>
+              <div class="auth-input-group">
+                <label class="auth-label">卡号</label>
+                <input type="text" class="auth-input" id="cardNumber" placeholder="请输入银行卡号" maxlength="19">
+              </div>
+              <div style="display: flex; gap: 16px;">
+                <div class="auth-input-group" style="flex: 1;">
+                  <label class="auth-label">有效期</label>
+                  <input type="text" class="auth-input" id="cardExpiry" placeholder="MM/YY" maxlength="5">
+                </div>
+                <div class="auth-input-group" style="flex: 1;">
+                  <label class="auth-label">CVV</label>
+                  <input type="text" class="auth-input" id="cardCvv" placeholder="123" maxlength="3">
+                </div>
+              </div>
+            </div>
+          `;
+        } else if (method === 'alipay') {
+          formHtml = `
+            <div style="text-align: center; padding: 20px;">
+              <div style="width: 150px; height: 150px; background: #f5f5f5; margin: 0 auto 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 48px;">
+                📱
+              </div>
+              <p style="color: #6b7280; font-size: 14px;">请使用支付宝扫描二维码完成支付</p>
+            </div>
+          `;
+        } else if (method === 'wechat') {
+          formHtml = `
+            <div style="text-align: center; padding: 20px;">
+              <div style="width: 150px; height: 150px; background: #f5f5f5; margin: 0 auto 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 48px;">
+                💬
+              </div>
+              <p style="color: #6b7280; font-size: 14px;">请使用微信扫描二维码完成支付</p>
+            </div>
+          `;
+        }
+
+        container.innerHTML = formHtml;
+        container.style.display = 'block';
+      }
+
+      backToPaymentMethods() {
+        this.resetPaymentModal();
+        document.getElementById('paymentMethodSelection').style.display = 'block';
+      }
+
+      confirmPayment() {
+        const field = this.currentPaymentField;
+        if (!field) return;
+
+        const methodNames = {
+          alipay: '支付宝',
+          wechat: '微信支付',
+          card: '银行卡'
+        };
+
+        const payment = {
+          id: 'pay_' + Date.now(),
+          formId: this.currentFormId,
+          fieldId: field.id,
+          fieldLabel: field.label,
+          description: field.description,
+          amount: field.amount,
+          currency: field.currency,
+          method: this.currentPaymentMethod,
+          methodName: methodNames[this.currentPaymentMethod],
+          status: 'success',
+          timestamp: new Date().toISOString()
+        };
+
+        this.savePayment(payment);
+        this.showPaymentSuccess(payment);
+      }
+
+      savePayment(payment) {
+        const payments = JSON.parse(localStorage.getItem('formPayments') || '[]');
+        payments.unshift(payment);
+        localStorage.setItem('formPayments', JSON.stringify(payments));
+      }
+
+      showPaymentSuccess(payment) {
+        const modal = document.getElementById('paymentModal');
+        const body = document.getElementById('paymentModalBody');
+        const footer = document.getElementById('paymentModalFooter');
+
+        footer.style.display = 'none';
+        document.getElementById('paymentModalTitle').textContent = '支付成功';
+
+        const currencySymbol = payment.currency === 'CNY' ? '¥' : (payment.currency === 'USD' ? '$' : '€');
+
+        body.innerHTML = `
+          <div class="payment-success">
+            <div class="payment-success-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <h3 class="payment-success-title">支付成功</h3>
+            <p class="payment-success-message">您已成功支付 ${currencySymbol}${payment.amount}</p>
+            <div style="background: #f5f5f5; border-radius: 8px; padding: 16px; margin-top: 16px;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <span style="color: #6b7280;">支付方式</span>
+                <span style="color: #1a1a1a;">${payment.methodName}</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span style="color: #6b7280;">订单号</span>
+                <span style="color: #1a1a1a; font-family: monospace;">${payment.id}</span>
+              </div>
+            </div>
+            <button onclick="formBuilder.closePaymentModal()" class="auth-btn" style="margin-top: 24px; width: 100%;">
+              完成
+            </button>
+          </div>
+        `;
+      }
+
+      togglePaymentPanel() {
+        const panel = document.getElementById('paymentPanel');
+        panel.classList.toggle('active');
+        if (panel.classList.contains('active')) {
+          this.renderPaymentRecords();
+        }
+      }
+
+      renderPaymentRecords() {
+        const content = document.getElementById('paymentContent');
+        const payments = JSON.parse(localStorage.getItem('formPayments') || '[]');
+        const formPayments = payments.filter(p => p.formId === this.currentFormId);
+
+        if (formPayments.length === 0) {
+          content.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48" style="margin-bottom: 12px; opacity: 0.5;">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                <line x1="1" y1="10" x2="23" y2="10"></line>
+              </svg>
+              <p>暂无支付记录</p>
+            </div>
+          `;
+          return;
+        }
+
+        const totalAmount = formPayments.reduce((sum, p) => sum + (p.amount || 0), 0);
+        const currencySymbol = '¥';
+
+        let html = `
+          <div class="data-stats">
+            <div class="stat-card">
+              <div class="stat-value">${formPayments.length}</div>
+              <div class="stat-label">支付笔数</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">${currencySymbol}${totalAmount.toFixed(2)}</div>
+              <div class="stat-label">总金额</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">${currencySymbol}${(totalAmount / formPayments.length || 0).toFixed(2)}</div>
+              <div class="stat-label">平均金额</div>
+            </div>
+          </div>
+          <div class="data-list">
+        `;
+
+        formPayments.slice(0, 20).forEach(payment => {
+          const statusClass = payment.status === 'success' ? 'success' : 'pending';
+          const statusText = payment.status === 'success' ? '已支付' : '处理中';
+
+          html += `
+            <div class="payment-record-card">
+              <div class="payment-record-header">
+                <span class="payment-record-title">${payment.fieldLabel || payment.description}</span>
+                <span class="payment-record-status ${statusClass}">${statusText}</span>
+              </div>
+              <div class="payment-record-amount">${currencySymbol}${payment.amount}</div>
+              <div class="payment-record-method">支付方式：${payment.methodName}</div>
+              <div class="payment-record-time">${new Date(payment.timestamp).toLocaleString('zh-CN')}</div>
+            </div>
+          `;
+        });
+
+        html += '</div>';
+        content.innerHTML = html;
       }
 
       getUsers() {
@@ -2761,11 +3246,12 @@
           datetime: { label: '日期时间', placeholder: '选择日期和时间' },
           textarea: { label: '多行文本', placeholder: '请输入内容...' },
           file: { label: '文件上传', placeholder: '选择文件' },
-          range: { label: '评分', placeholder: '0-10' }
+          range: { label: '评分', placeholder: '0-10' },
+          payment: { label: '在线付款', amount: 100, currency: 'CNY', description: '商品付款' }
         };
 
         const config = defaults[type] || { label: '新字段', placeholder: '' };
-        return {
+        const field = {
           id: this.generateId(),
           type,
           label: config.label,
@@ -2776,6 +3262,14 @@
           min: type === 'range' ? 0 : undefined,
           max: type === 'range' ? 10 : undefined
         };
+        
+        if (type === 'payment') {
+          field.amount = config.amount;
+          field.currency = config.currency;
+          field.description = config.description;
+        }
+        
+        return field;
       }
 
       handleDragStart(e) {
@@ -3022,6 +3516,19 @@
           case 'range':
             return `<input type="range" class="form-field-input" min="${field.min || 0}" max="${field.max || 10}" value="${field.defaultValue || 5}" ${disabled}>`;
           
+          case 'payment':
+            const currencySymbol = field.currency === 'CNY' ? '¥' : '$';
+            return `
+              <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid var(--primary); border-radius: var(--radius); padding: 16px; text-align: center;">
+                <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">${field.description || '付款金额'}</div>
+                <div style="font-size: 32px; font-weight: 700; color: var(--primary); margin-bottom: 12px;">${currencySymbol}${field.amount || 0}</div>
+                <button type="button" onclick="formBuilder.openPaymentModal('${field.id}')" 
+                        style="padding: 10px 24px; background: var(--primary); color: white; border: none; border-radius: var(--radius); font-size: 14px; font-weight: 600; cursor: pointer;">
+                  选择支付方式
+                </button>
+              </div>
+            `;
+          
           default:
             return `<input type="text" class="form-field-input" placeholder="${field.placeholder}" ${disabled}>`;
         }
@@ -3117,6 +3624,32 @@
               <label class="property-label">最大值</label>
               <input type="number" class="property-input" value="${field.max || 10}" 
                      onchange="formBuilder.updateField('max', parseInt(this.value))">
+            </div>
+          </div>
+          ` : ''}
+
+          ${field.type === 'payment' ? `
+          <div class="property-section">
+            <h3 class="property-section-title">支付配置</h3>
+            <div class="property-field">
+              <label class="property-label">商品描述</label>
+              <input type="text" class="property-input" value="${field.description || ''}" 
+                     placeholder="商品名称或描述"
+                     onchange="formBuilder.updateField('description', this.value)">
+            </div>
+            <div class="property-field">
+              <label class="property-label">支付金额</label>
+              <input type="number" class="property-input" value="${field.amount || 0}" 
+                     placeholder="0.00"
+                     onchange="formBuilder.updateField('amount', parseFloat(this.value))">
+            </div>
+            <div class="property-field">
+              <label class="property-label">货币类型</label>
+              <select class="property-input" onchange="formBuilder.updateField('currency', this.value)">
+                <option value="CNY" ${field.currency === 'CNY' ? 'selected' : ''}>人民币 (CNY ¥)</option>
+                <option value="USD" ${field.currency === 'USD' ? 'selected' : ''}>美元 (USD $)</option>
+                <option value="EUR" ${field.currency === 'EUR' ? 'selected' : ''}>欧元 (EUR €)</option>
+              </select>
             </div>
           </div>
           ` : ''}
