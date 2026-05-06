@@ -1297,6 +1297,257 @@
       background: linear-gradient(135deg, #09090B 0%, #18181B 100%);
     }
 
+    /* Auth Page */
+    .auth-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      background: linear-gradient(135deg, #09090B 0%, #18181B 100%);
+    }
+
+    .auth-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .auth-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .auth-logo svg {
+      width: 32px;
+      height: 32px;
+      color: var(--primary);
+    }
+
+    .auth-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .auth-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .auth-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .auth-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .auth-input {
+      padding: 12px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 14px;
+      transition: var(--transition);
+    }
+
+    .auth-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .auth-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .auth-error {
+      font-size: 12px;
+      color: var(--error);
+      margin-top: 4px;
+    }
+
+    .auth-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .auth-checkbox input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+    }
+
+    .auth-checkbox-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .auth-btn {
+      padding: 14px 24px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .auth-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    .auth-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .auth-link {
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    .auth-link-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .auth-link-text a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .auth-link-text a:hover {
+      text-decoration: underline;
+    }
+
+    /* User Menu */
+    .user-menu {
+      position: relative;
+    }
+
+    .user-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 13px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .user-btn:hover {
+      background: var(--surface-hover);
+      border-color: var(--border-hover);
+    }
+
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: white;
+      font-size: 12px;
+    }
+
+    .user-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 8px;
+      min-width: 180px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-8px);
+      transition: var(--transition);
+      z-index: 100;
+    }
+
+    .user-menu:hover .user-dropdown,
+    .user-menu:focus-within .user-dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .user-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text);
+      font-size: 13px;
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      width: 100%;
+      text-align: left;
+      transition: var(--transition);
+    }
+
+    .user-dropdown-item:hover {
+      background: var(--surface-hover);
+    }
+
+    .user-dropdown-item svg {
+      width: 16px;
+      height: 16px;
+      color: var(--text-secondary);
+    }
+
+    .user-dropdown-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 8px 0;
+    }
+
+    .user-email {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
     .preview-page-form {
       background: white;
       border-radius: 20px;
@@ -1810,6 +2061,56 @@
     </div>
   </div>
 
+  <!-- Auth Page -->
+  <div class="auth-page" id="authPage" style="display: none;">
+    <div class="auth-container">
+      <div class="auth-header">
+        <div class="auth-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 11l3 3L22 4"></path>
+            <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
+          </svg>
+          <span style="font-size: 20px; font-weight: 700;">智能表单</span>
+        </div>
+        <h2 class="auth-title" id="authTitle">登录</h2>
+        <p class="auth-subtitle" id="authSubtitle">欢迎回来，请登录您的账户</p>
+      </div>
+
+      <form class="auth-form" id="authForm">
+        <div class="auth-input-group">
+          <label class="auth-label" for="authEmail">邮箱地址</label>
+          <input type="email" id="authEmail" class="auth-input" placeholder="请输入邮箱" required>
+          <div class="auth-error" id="emailError"></div>
+        </div>
+
+        <div class="auth-input-group">
+          <label class="auth-label" for="authPassword">密码</label>
+          <input type="password" id="authPassword" class="auth-input" placeholder="请输入密码" required>
+          <div class="auth-error" id="passwordError"></div>
+        </div>
+
+        <div class="auth-input-group">
+          <label class="auth-label" for="authName" id="authNameLabel" style="display: none;">用户名</label>
+          <input type="text" id="authName" class="auth-input" placeholder="请输入用户名" style="display: none;">
+          <div class="auth-error" id="nameError"></div>
+        </div>
+
+        <div class="auth-checkbox" id="rememberMeContainer">
+          <input type="checkbox" id="rememberMe">
+          <label class="auth-checkbox-label" for="rememberMe">记住我</label>
+        </div>
+
+        <button type="submit" class="auth-btn" id="authSubmit">登录</button>
+      </form>
+
+      <div class="auth-link">
+        <p class="auth-link-text" id="authLinkText">
+          还没有账户？ <a href="#" id="authToggleLink">立即注册</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
   <script>
     // Form Builder Application
     class FormBuilder {
@@ -1822,13 +2123,41 @@
         this.historyIndex = -1;
         this.mode = 'edit';
         this.formName = '我的表单';
+        this.currentUser = null;
+        this.isRegisterMode = false;
         
         this.init();
       }
 
       init() {
         this.bindEvents();
-        this.loadForms();
+        
+        // Check if user is logged in
+        const savedUser = localStorage.getItem('currentUser');
+        if (savedUser) {
+          try {
+            this.currentUser = JSON.parse(savedUser);
+            this.loadForms();
+          } catch (e) {
+            this.currentUser = null;
+          }
+        }
+        
+        // Check for preview mode (bypass auth)
+        const params = new URLSearchParams(window.location.search);
+        const preview = params.get('preview');
+        if (preview === 'true') {
+          this.handleUrlParams();
+          return;
+        }
+        
+        // Show auth page if not logged in
+        if (!this.currentUser) {
+          this.showAuthPage();
+          return;
+        }
+        
+        // Load app if logged in
         if (this.forms.length === 0) {
           this.createNewForm();
         } else {
@@ -1836,6 +2165,7 @@
         }
         this.renderForm();
         this.renderFormList();
+        this.renderUserMenu();
       }
 
       bindEvents() {
@@ -1847,9 +2177,11 @@
 
         // Canvas Drop Zone
         const canvas = document.getElementById('canvas');
-        canvas.addEventListener('dragover', (e) => this.handleDragOver(e));
-        canvas.addEventListener('dragleave', (e) => this.handleDragLeave(e));
-        canvas.addEventListener('drop', (e) => this.handleDrop(e));
+        if (canvas) {
+          canvas.addEventListener('dragover', (e) => this.handleDragOver(e));
+          canvas.addEventListener('dragleave', (e) => this.handleDragLeave(e));
+          canvas.addEventListener('drop', (e) => this.handleDrop(e));
+        }
 
         // Mode Switch
         document.querySelectorAll('.mode-btn').forEach(btn => {
@@ -1857,29 +2189,30 @@
         });
 
         // Toolbar Buttons
-        document.getElementById('saveBtn').addEventListener('click', () => this.saveForm());
-        document.getElementById('exportBtn').addEventListener('click', () => this.exportForm());
-        document.getElementById('clearBtn').addEventListener('click', () => this.clearForm());
-        document.getElementById('undoBtn').addEventListener('click', () => this.undo());
-        document.getElementById('dataBtn').addEventListener('click', () => this.toggleDataPanel());
-        document.getElementById('closeDataPanel').addEventListener('click', () => this.toggleDataPanel());
-        document.getElementById('closePropertyPanel').addEventListener('click', () => this.deselectField());
-        document.getElementById('newFormBtn').addEventListener('click', () => this.createNewForm());
-        document.getElementById('createFormBtn').addEventListener('click', () => this.createNewForm());
-        document.getElementById('copyPreviewLinkBtn').addEventListener('click', () => this.copyPreviewLink());
+        document.getElementById('saveBtn')?.addEventListener('click', () => this.saveForm());
+        document.getElementById('exportBtn')?.addEventListener('click', () => this.exportForm());
+        document.getElementById('clearBtn')?.addEventListener('click', () => this.clearForm());
+        document.getElementById('undoBtn')?.addEventListener('click', () => this.undo());
+        document.getElementById('dataBtn')?.addEventListener('click', () => this.toggleDataPanel());
+        document.getElementById('closeDataPanel')?.addEventListener('click', () => this.toggleDataPanel());
+        document.getElementById('closePropertyPanel')?.addEventListener('click', () => this.deselectField());
+        document.getElementById('newFormBtn')?.addEventListener('click', () => this.createNewForm());
+        document.getElementById('createFormBtn')?.addEventListener('click', () => this.createNewForm());
+        document.getElementById('copyPreviewLinkBtn')?.addEventListener('click', () => this.copyPreviewLink());
+
+        // Auth Events
+        document.getElementById('authForm')?.addEventListener('submit', (e) => this.handleAuthSubmit(e));
+        document.getElementById('authToggleLink')?.addEventListener('click', (e) => this.toggleAuthMode(e));
 
         // Keyboard Shortcuts
         document.addEventListener('keydown', (e) => this.handleKeyboard(e));
 
         // Click outside to deselect
-        document.getElementById('canvas').addEventListener('click', (e) => {
+        document.getElementById('canvas')?.addEventListener('click', (e) => {
           if (e.target.id === 'canvas' || e.target.id === 'formPreview') {
             this.deselectField();
           }
         });
-
-        // Handle URL parameters for standalone preview
-        this.handleUrlParams();
       }
 
       generateId() {
@@ -2050,6 +2383,237 @@
 
       saveForms() {
         localStorage.setItem('forms', JSON.stringify(this.forms));
+      }
+
+      // Auth Methods
+      showAuthPage() {
+        document.getElementById('app').style.display = 'none';
+        document.getElementById('previewPage').style.display = 'none';
+        document.getElementById('authPage').style.display = 'flex';
+        this.isRegisterMode = false;
+        this.updateAuthUI();
+      }
+
+      hideAuthPage() {
+        document.getElementById('authPage').style.display = 'none';
+        document.getElementById('app').style.display = 'flex';
+      }
+
+      toggleAuthMode(e) {
+        e.preventDefault();
+        this.isRegisterMode = !this.isRegisterMode;
+        this.updateAuthUI();
+        this.clearAuthErrors();
+      }
+
+      updateAuthUI() {
+        const title = document.getElementById('authTitle');
+        const subtitle = document.getElementById('authSubtitle');
+        const submitBtn = document.getElementById('authSubmit');
+        const linkText = document.getElementById('authLinkText');
+        const toggleLink = document.getElementById('authToggleLink');
+        const nameLabel = document.getElementById('authNameLabel');
+        const nameInput = document.getElementById('authName');
+        const rememberMe = document.getElementById('rememberMeContainer');
+
+        if (this.isRegisterMode) {
+          title.textContent = '注册';
+          subtitle.textContent = '创建一个新账户开始使用';
+          submitBtn.textContent = '注册';
+          linkText.innerHTML = '已有账户？ <a href="#" id="authToggleLink">立即登录</a>';
+          nameLabel.style.display = 'block';
+          nameInput.style.display = 'block';
+          rememberMe.style.display = 'none';
+        } else {
+          title.textContent = '登录';
+          subtitle.textContent = '欢迎回来，请登录您的账户';
+          submitBtn.textContent = '登录';
+          linkText.innerHTML = '还没有账户？ <a href="#" id="authToggleLink">立即注册</a>';
+          nameLabel.style.display = 'none';
+          nameInput.style.display = 'none';
+          rememberMe.style.display = 'flex';
+        }
+
+        // Re-bind the toggle link event
+        document.getElementById('authToggleLink').addEventListener('click', (e) => this.toggleAuthMode(e));
+      }
+
+      clearAuthErrors() {
+        document.getElementById('emailError').textContent = '';
+        document.getElementById('passwordError').textContent = '';
+        document.getElementById('nameError').textContent = '';
+      }
+
+      handleAuthSubmit(e) {
+        e.preventDefault();
+        this.clearAuthErrors();
+
+        const email = document.getElementById('authEmail').value;
+        const password = document.getElementById('authPassword').value;
+        const name = document.getElementById('authName').value;
+        const rememberMe = document.getElementById('rememberMe').checked;
+
+        if (!this.validateEmail(email)) {
+          document.getElementById('emailError').textContent = '请输入有效的邮箱地址';
+          return;
+        }
+
+        if (password.length < 6) {
+          document.getElementById('passwordError').textContent = '密码至少需要6个字符';
+          return;
+        }
+
+        if (this.isRegisterMode) {
+          if (!name.trim()) {
+            document.getElementById('nameError').textContent = '请输入用户名';
+            return;
+          }
+          this.register(email, password, name, rememberMe);
+        } else {
+          this.login(email, password, rememberMe);
+        }
+      }
+
+      validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+      }
+
+      register(email, password, name, rememberMe) {
+        const users = this.getUsers();
+        
+        // Check if email already exists
+        if (users.find(u => u.email === email)) {
+          document.getElementById('emailError').textContent = '该邮箱已被注册';
+          return;
+        }
+
+        // Create new user
+        const newUser = {
+          id: 'user_' + Date.now(),
+          email,
+          password: this.hashPassword(password),
+          name,
+          createdAt: new Date().toISOString()
+        };
+
+        users.push(newUser);
+        localStorage.setItem('users', JSON.stringify(users));
+        this.loginSuccess(newUser, rememberMe);
+      }
+
+      login(email, password, rememberMe) {
+        const users = this.getUsers();
+        const user = users.find(u => u.email === email);
+
+        if (!user) {
+          document.getElementById('emailError').textContent = '邮箱或密码错误';
+          return;
+        }
+
+        if (user.password !== this.hashPassword(password)) {
+          document.getElementById('passwordError').textContent = '邮箱或密码错误';
+          return;
+        }
+
+        this.loginSuccess(user, rememberMe);
+      }
+
+      loginSuccess(user, rememberMe) {
+        this.currentUser = user;
+        
+        if (rememberMe) {
+          localStorage.setItem('currentUser', JSON.stringify(user));
+        } else {
+          sessionStorage.setItem('currentUser', JSON.stringify(user));
+        }
+
+        this.hideAuthPage();
+        
+        // Initialize app
+        this.loadForms();
+        if (this.forms.length === 0) {
+          this.createNewForm();
+        } else {
+          this.selectForm(this.forms[0].id);
+        }
+        this.renderForm();
+        this.renderFormList();
+        this.renderUserMenu();
+        this.showToast(`欢迎回来，${user.name}！`, 'success');
+      }
+
+      logout() {
+        this.currentUser = null;
+        localStorage.removeItem('currentUser');
+        sessionStorage.removeItem('currentUser');
+        this.forms = [];
+        this.fields = [];
+        this.currentFormId = null;
+        this.selectedFieldId = null;
+        this.showAuthPage();
+        this.showToast('已安全退出', 'success');
+      }
+
+      getUsers() {
+        const saved = localStorage.getItem('users');
+        if (saved) {
+          try {
+            return JSON.parse(saved);
+          } catch (e) {
+            return [];
+          }
+        }
+        return [];
+      }
+
+      hashPassword(password) {
+        // Simple hash for demonstration (not secure for production)
+        let hash = 0;
+        for (let i = 0; i < password.length; i++) {
+          const char = password.charCodeAt(i);
+          hash = ((hash << 5) - hash) + char;
+          hash = hash & hash;
+        }
+        return hash.toString(16);
+      }
+
+      renderUserMenu() {
+        const toolbarRight = document.querySelector('.toolbar-right');
+        if (!toolbarRight || !this.currentUser) return;
+
+        let userMenuHtml = `
+          <div class="user-menu">
+            <button class="user-btn">
+              <div class="user-avatar">${this.currentUser.name.charAt(0).toUpperCase()}</div>
+              <span>${this.currentUser.name}</span>
+            </button>
+            <div class="user-dropdown">
+              <div style="padding: 10px 12px; border-bottom: 1px solid var(--border); margin-bottom: 4px;">
+                <div style="font-size: 14px; font-weight: 600; color: var(--text);">${this.currentUser.name}</div>
+                <div class="user-email">${this.currentUser.email}</div>
+              </div>
+              <button class="user-dropdown-item" onclick="formBuilder.logout()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                退出登录
+              </button>
+            </div>
+          </div>
+        `;
+
+        // Remove existing user menu
+        const existingMenu = toolbarRight.querySelector('.user-menu');
+        if (existingMenu) {
+          toolbarRight.removeChild(existingMenu);
+        }
+
+        // Insert user menu before save button
+        const saveBtn = document.getElementById('saveBtn');
+        toolbarRight.insertAdjacentHTML('beforeend', userMenuHtml);
       }
 
       handleUrlParams() {
