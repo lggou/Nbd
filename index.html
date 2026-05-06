@@ -1,0 +1,2304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>智能表单系统 - Visual Form Builder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6366F1;
+      --primary-hover: #818CF8;
+      --secondary: #8B5CF6;
+      --accent: #22D3EE;
+      --bg: #09090B;
+      --surface: #18181B;
+      --surface-hover: #1F1F23;
+      --border: #27272A;
+      --border-hover: #3F3F46;
+      --text: #FAFAFA;
+      --text-secondary: #A1A1AA;
+      --text-muted: #71717A;
+      --success: #22C55E;
+      --error: #EF4444;
+      --warning: #F59E0B;
+      --radius-sm: 6px;
+      --radius: 8px;
+      --radius-lg: 12px;
+      --transition: 150ms ease-out;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    /* Layout */
+    .app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      height: 56px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .logo svg {
+      width: 24px;
+      height: 24px;
+      color: var(--primary);
+    }
+
+    .form-name-input {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
+      min-width: 200px;
+    }
+
+    .form-name-input:hover {
+      border-color: var(--border);
+    }
+
+    .form-name-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: var(--bg);
+    }
+
+    .toolbar-center {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg);
+      padding: 4px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    .mode-btn {
+      padding: 6px 16px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .mode-btn:hover {
+      color: var(--text);
+    }
+
+    .mode-btn.active {
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--surface-hover);
+      border-color: var(--border-hover);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Main Content */
+    .main-content {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* Left Sidebar */
+    .sidebar {
+      width: 260px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .sidebar-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+    }
+
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+    }
+
+    .field-group {
+      margin-bottom: 16px;
+    }
+
+    .field-group-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      padding: 0 4px;
+    }
+
+    .field-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: grab;
+      transition: var(--transition);
+      user-select: none;
+    }
+
+    .field-item:hover {
+      border-color: var(--border-hover);
+      background: var(--surface-hover);
+    }
+
+    .field-item:active {
+      cursor: grabbing;
+    }
+
+    .field-item.dragging {
+      opacity: 0.5;
+    }
+
+    .field-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface);
+      border-radius: var(--radius-sm);
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .field-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .field-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .field-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .field-type {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Canvas */
+    .canvas-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .canvas-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .canvas-title {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .canvas-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .canvas-action-btn {
+      padding: 6px 12px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .canvas-action-btn:hover {
+      border-color: var(--border-hover);
+      color: var(--text);
+    }
+
+    .canvas-action-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .canvas {
+      flex: 1;
+      padding: 32px;
+      overflow-y: auto;
+      display: flex;
+      justify-content: center;
+    }
+
+    .form-preview {
+      width: 100%;
+      max-width: 680px;
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      min-height: 400px;
+      padding: 32px;
+    }
+
+    .form-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 336px;
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      text-align: center;
+    }
+
+    .form-empty-icon {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 16px;
+      color: var(--text-muted);
+    }
+
+    .form-empty-title {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .form-empty-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+
+    .quick-add {
+      display: flex;
+      gap: 8px;
+    }
+
+    .quick-add-btn {
+      padding: 8px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .quick-add-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Form Fields */
+    .form-field {
+      position: relative;
+      margin-bottom: 20px;
+      padding: 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .form-field:hover {
+      border-color: var(--border-hover);
+    }
+
+    .form-field.selected {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    }
+
+    .form-field.drag-over {
+      border-color: var(--accent);
+      background: rgba(34, 211, 238, 0.05);
+    }
+
+    .form-field-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .form-field-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .required-mark {
+      color: var(--error);
+      font-size: 12px;
+    }
+
+    .form-field-actions {
+      display: flex;
+      gap: 4px;
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .form-field:hover .form-field-actions {
+      opacity: 1;
+    }
+
+    .field-action-btn {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .field-action-btn:hover {
+      background: var(--surface-hover);
+      color: var(--text);
+    }
+
+    .field-action-btn.delete:hover {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: var(--error);
+      color: var(--error);
+    }
+
+    .field-action-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .form-field-input {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 14px;
+      transition: var(--transition);
+    }
+
+    .form-field-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .form-field-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .form-field-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* Select/Radio/Checkbox Options */
+    .field-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .field-option input[type="text"] {
+      flex: 1;
+      padding: 8px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .field-option input[type="text"]:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .field-option .remove-option {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
+    }
+
+    .field-option .remove-option:hover {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--error);
+    }
+
+    .add-option-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      background: transparent;
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      font-size: 13px;
+      cursor: pointer;
+      transition: var(--transition);
+      width: 100%;
+      justify-content: center;
+    }
+
+    .add-option-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .add-option-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Right Property Panel */
+    .property-panel {
+      width: 320px;
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .property-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .property-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .property-close {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
+    }
+
+    .property-close:hover {
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .property-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px;
+    }
+
+    .property-section {
+      margin-bottom: 24px;
+    }
+
+    .property-section-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .property-field {
+      margin-bottom: 12px;
+    }
+
+    .property-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .property-input {
+      width: 100%;
+      padding: 8px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 13px;
+      transition: var(--transition);
+    }
+
+    .property-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .property-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    textarea.property-input {
+      min-height: 80px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    .property-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      background: var(--border);
+      border-radius: 11px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .toggle-switch.active {
+      background: var(--primary);
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 16px;
+      height: 16px;
+      background: white;
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+
+    .toggle-switch.active::after {
+      left: 21px;
+    }
+
+    /* Empty Property State */
+    .property-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 200px;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .property-empty svg {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      width: 90%;
+      max-width: 500px;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      transform: scale(0.95);
+      transition: var(--transition);
+    }
+
+    .modal-overlay.active .modal {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
+    }
+
+    .modal-close:hover {
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1001;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .toast.success {
+      border-left: 3px solid var(--success);
+    }
+
+    .toast.error {
+      border-left: 3px solid var(--error);
+    }
+
+    .toast-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .toast.success .toast-icon {
+      color: var(--success);
+    }
+
+    .toast.error .toast-icon {
+      color: var(--error);
+    }
+
+    .toast-message {
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* Preview Mode */
+    .preview-mode .sidebar,
+    .preview-mode .property-panel {
+      display: none;
+    }
+
+    .preview-mode .canvas-container {
+      background: var(--bg);
+    }
+
+    .preview-form {
+      background: white;
+      padding: 40px;
+      border-radius: var(--radius-lg);
+      color: #1a1a1a;
+    }
+
+    .preview-form .form-field {
+      background: white;
+      border-color: #e5e5e5;
+      margin-bottom: 24px;
+    }
+
+    .preview-form .form-field:hover {
+      border-color: #d5d5d5;
+    }
+
+    .preview-form .form-field-label {
+      color: #374151;
+      font-weight: 500;
+    }
+
+    .preview-form .form-field-input {
+      background: white;
+      border-color: #d1d5db;
+      color: #1a1a1a;
+    }
+
+    .preview-form .form-field-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .preview-form .form-field-input::placeholder {
+      color: #9ca3af;
+    }
+
+    .preview-submit {
+      width: 100%;
+      padding: 14px 24px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .preview-submit:hover {
+      background: var(--primary-hover);
+    }
+
+    .preview-form-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+
+    .preview-form-desc {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 32px;
+    }
+
+    /* Data Panel */
+    .data-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 600px;
+      height: 100vh;
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      z-index: 900;
+      transform: translateX(100%);
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .data-panel.active {
+      transform: translateX(0);
+    }
+
+    .data-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .data-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .data-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    .data-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .data-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .data-item {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .data-item-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .data-item-time {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .data-item-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .data-item-field {
+      display: flex;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .data-item-field-label {
+      color: var(--text-secondary);
+      min-width: 80px;
+    }
+
+    .data-item-field-value {
+      color: var(--text);
+    }
+
+    /* Drag Drop Indicator */
+    .drop-indicator {
+      height: 3px;
+      background: var(--primary);
+      border-radius: 2px;
+      margin: 8px 0;
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .drop-indicator.active {
+      opacity: 1;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--border-hover);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .sidebar {
+        width: 220px;
+      }
+      .property-panel {
+        width: 280px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar,
+      .property-panel {
+        position: fixed;
+        z-index: 100;
+        height: calc(100vh - 56px);
+        top: 56px;
+      }
+      .sidebar {
+        left: 0;
+        transform: translateX(-100%);
+      }
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      .property-panel {
+        right: 0;
+        transform: translateX(100%);
+      }
+      .property-panel.active {
+        transform: translateX(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <!-- Toolbar -->
+    <header class="toolbar">
+      <div class="toolbar-left">
+        <div class="logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 11l3 3L22 4"></path>
+            <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
+          </svg>
+          <span>智能表单</span>
+        </div>
+        <input type="text" class="form-name-input" id="formName" value="我的表单" placeholder="表单名称">
+      </div>
+      
+      <div class="toolbar-center">
+        <button class="mode-btn active" data-mode="edit">编辑</button>
+        <button class="mode-btn" data-mode="preview">预览</button>
+      </div>
+      
+      <div class="toolbar-right">
+        <button class="btn btn-secondary" id="dataBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          提交数据
+        </button>
+        <button class="btn btn-secondary" id="exportBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"></path>
+            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+            <polyline points="7 3 7 8 15 8"></polyline>
+          </svg>
+          导出
+        </button>
+        <button class="btn btn-primary" id="saveBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"></path>
+            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+            <polyline points="7 3 7 8 15 8"></polyline>
+          </svg>
+          保存
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Left Sidebar - Field Library -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <h2 class="sidebar-title">字段组件</h2>
+        </div>
+        <div class="sidebar-content">
+          <!-- Input Fields -->
+          <div class="field-group">
+            <h3 class="field-group-title">输入类</h3>
+            <div class="field-list">
+              <div class="field-item" draggable="true" data-type="text">
+                <div class="field-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="4" y1="9" x2="20" y2="9"></line>
+                    <line x1="4" y1="15" x2="20" y2="15"></line>
+                    <line x1="10" y1="3" x2="8" y2="21"></line>
+                    <line x1="16" y1="3" x2="14" y2="21"></line>
+                  </svg>
+                </div>
+                <div class="field-info">
+                  <div class="field-name">文本输入</div>
+                  <div class="field-type">Text</div>
+                </div>
+              </div>
+              <div class="field-item" draggable="true" data-type="email">
+                <div class="field-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                  </svg>
+                </div>
+                <div class="field-info">
+                  <div class="field-name">邮箱</div>
+                  <div class="field-type">Email</div>
+                </div>
+              </div>
+              <div class="field-item" draggable="true" data-type="number">
+                <div class="field-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="4" y1="9" x2="20" y2="9"></line>
+                    <line x1="10" y1="3" x2="8" y2="21"></line>
+                    <line x1="16" y1="3" x2="14" y2="21"></line>
+                  </svg>
+                </div>
+                <div class="field-info">
+                  <div class="field-name">数字</div>
+                  <div class="field-type">Number</div>
+                </div>
+              </div>
+              <div class="field-item" draggable="true" data-type="tel">
+                <div class="field-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"></path>
+                  </svg>
+                </div>
+                <div class="field-info">
+                  <div class="field-name">电话</div>
+                  <div class="field-type">Tel</div>
+                </div>
+              </div>
+              <div class="field-item" draggable="true" data-type="url">
+                <div class="field-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"></path>
+                  </svg>
+                </div>
+                <div class="field-info">
+                  <div class="field-name">网址</div>
+                  <div class="field-type">URL</div>
+                </div>
+              </div>
+              <div class="field-item" draggable="true" data-type="password">
+                <div class="field-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0110 0v4"></path>
+                  </svg>
+                </div>
+                <div class="field-info">
+                  <div class="field-name">密码</div>
+                  <div class="field-type">Password</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Selection Fields -->
+          <div class="field-group">
+            <h3 class="field-group-title">选择类</h3>
+            <div class="field-list">
+              <div class="field-item" draggable="true" data-type="select">
+                <div class="field-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 9l6 6 6-6"></path>
+                  </svg>
+                </div>
+                <div class="field-info">
+                  <div class="field-name">下拉框</div>
+                  <div class="field-type">Select</div>
+                </div>
+              </div>
+              <div class="field-item" draggable="true" data-type="radio">
+                <div class="field-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <circle cx="12" cy="12" r="3" fill="currentColor"></circle>
+                  </svg>
+                </div>
+                <div class="field-info">
+                  <div class="field-name">单选</div>
+                  <div class="field-type">Radio</div>
+                </div>
+              </div>
+              <div class="field-item" draggable="true" data-type="checkbox">
+                <div class="field-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <polyline points="9 11 12 14 22 4"></polyline>
+                  </svg>
+                </div>
+                <div class="field-info">
+                  <div class="field-name">多选</div>
+                  <div class="field-type">Checkbox</div>
+                </div>
+              </div>
+              <div class="field-item" draggable="true" data-type="switch">
+                <div class="field-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="1" y="5" width="22" height="14" rx="7" ry="7"></rect>
+                    <circle cx="16" cy="12" r="3"></circle>
+                  </svg>
+                </div>
+                <div class="field-info">
+                  <div class="field-name">开关</div>
+                  <div class="field-type">Switch</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Date/Time Fields -->
+          <div class="field-group">
+            <h3 class="field-group-title">日期时间</h3>
+            <div class="field-list">
+              <div class="field-item" draggable="true" data-type="date">
+                <div class="field-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                </div>
+                <div class="field-info">
+                  <div class="field-name">日期</div>
+                  <div class="field-type">Date</div>
+                </div>
+              </div>
+              <div class="field-item" draggable="true" data-type="time">
+                <div class="field-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                </div>
+                <div class="field-info">
+                  <div class="field-name">时间</div>
+                  <div class="field-type">Time</div>
+                </div>
+              </div>
+              <div class="field-item" draggable="true" data-type="datetime">
+                <div class="field-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                    <circle cx="12" cy="16" r="2"></circle>
+                  </svg>
+                </div>
+                <div class="field-info">
+                  <div class="field-name">日期时间</div>
+                  <div class="field-type">DateTime</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Advanced Fields -->
+          <div class="field-group">
+            <h3 class="field-group-title">高级</h3>
+            <div class="field-list">
+              <div class="field-item" draggable="true" data-type="textarea">
+                <div class="field-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="17" y1="10" x2="3" y2="10"></line>
+                    <line x1="21" y1="6" x2="3" y2="6"></line>
+                    <line x1="21" y1="14" x2="3" y2="14"></line>
+                    <line x1="17" y1="18" x2="3" y2="18"></line>
+                  </svg>
+                </div>
+                <div class="field-info">
+                  <div class="field-name">多行文本</div>
+                  <div class="field-type">Textarea</div>
+                </div>
+              </div>
+              <div class="field-item" draggable="true" data-type="file">
+                <div class="field-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="12" y1="18" x2="12" y2="12"></line>
+                    <line x1="9" y1="15" x2="15" y2="15"></line>
+                  </svg>
+                </div>
+                <div class="field-info">
+                  <div class="field-name">文件上传</div>
+                  <div class="field-type">File</div>
+                </div>
+              </div>
+              <div class="field-item" draggable="true" data-type="range">
+                <div class="field-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="4" y1="21" x2="4" y2="14"></line>
+                    <line x1="4" y1="10" x2="4" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12" y2="3"></line>
+                    <line x1="20" y1="21" x2="20" y2="16"></line>
+                    <line x1="20" y1="12" x2="20" y2="3"></line>
+                    <circle cx="4" cy="12" r="2"></circle>
+                    <circle cx="12" cy="10" r="2"></circle>
+                    <circle cx="20" cy="14" r="2"></circle>
+                  </svg>
+                </div>
+                <div class="field-info">
+                  <div class="field-name">滑动条</div>
+                  <div class="field-type">Range</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Canvas -->
+      <div class="canvas-container" id="canvasContainer">
+        <div class="canvas-header">
+          <span class="canvas-title">表单设计</span>
+          <div class="canvas-actions">
+            <button class="canvas-action-btn" id="clearBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
+              </svg>
+              清空
+            </button>
+            <button class="canvas-action-btn" id="undoBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 7v6h6"></path>
+                <path d="M21 17a9 9 0 00-9-9 9 9 0 00-6.36 2.64L3 13"></path>
+              </svg>
+              撤销
+            </button>
+          </div>
+        </div>
+        <div class="canvas" id="canvas">
+          <div class="form-preview" id="formPreview">
+            <!-- Form fields will be rendered here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Property Panel -->
+      <aside class="property-panel" id="propertyPanel">
+        <div class="property-header">
+          <h2 class="property-title">属性配置</h2>
+          <button class="property-close" id="closePropertyPanel">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="property-content" id="propertyContent">
+          <div class="property-empty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <p>选择字段以编辑属性</p>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Data Panel -->
+    <div class="data-panel" id="dataPanel">
+      <div class="data-header">
+        <h2 class="data-title">提交数据</h2>
+        <button class="property-close" id="closeDataPanel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="data-content" id="dataContent">
+        <!-- Data stats and list -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Form Builder Application
+    class FormBuilder {
+      constructor() {
+        this.fields = [];
+        this.selectedFieldId = null;
+        this.history = [];
+        this.historyIndex = -1;
+        this.mode = 'edit';
+        this.formName = '我的表单';
+        
+        this.init();
+      }
+
+      init() {
+        this.bindEvents();
+        this.loadFromStorage();
+        this.renderForm();
+      }
+
+      bindEvents() {
+        // Field Library Drag Events
+        document.querySelectorAll('.field-item').forEach(item => {
+          item.addEventListener('dragstart', (e) => this.handleDragStart(e));
+          item.addEventListener('dragend', (e) => this.handleDragEnd(e));
+        });
+
+        // Canvas Drop Zone
+        const canvas = document.getElementById('canvas');
+        canvas.addEventListener('dragover', (e) => this.handleDragOver(e));
+        canvas.addEventListener('dragleave', (e) => this.handleDragLeave(e));
+        canvas.addEventListener('drop', (e) => this.handleDrop(e));
+
+        // Mode Switch
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => this.switchMode(e.target.dataset.mode));
+        });
+
+        // Toolbar Buttons
+        document.getElementById('saveBtn').addEventListener('click', () => this.saveForm());
+        document.getElementById('exportBtn').addEventListener('click', () => this.exportForm());
+        document.getElementById('clearBtn').addEventListener('click', () => this.clearForm());
+        document.getElementById('undoBtn').addEventListener('click', () => this.undo());
+        document.getElementById('dataBtn').addEventListener('click', () => this.toggleDataPanel());
+        document.getElementById('closeDataPanel').addEventListener('click', () => this.toggleDataPanel());
+        document.getElementById('closePropertyPanel').addEventListener('click', () => this.deselectField());
+
+        // Form Name
+        document.getElementById('formName').addEventListener('input', (e) => {
+          this.formName = e.target.value;
+        });
+
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', (e) => this.handleKeyboard(e));
+
+        // Click outside to deselect
+        document.getElementById('canvas').addEventListener('click', (e) => {
+          if (e.target.id === 'canvas' || e.target.id === 'formPreview') {
+            this.deselectField();
+          }
+        });
+      }
+
+      generateId() {
+        return 'field_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      }
+
+      getDefaultField(type) {
+        const defaults = {
+          text: { label: '文本输入', placeholder: '请输入文本' },
+          email: { label: '邮箱地址', placeholder: '请输入邮箱' },
+          number: { label: '数字', placeholder: '请输入数字' },
+          tel: { label: '联系电话', placeholder: '请输入电话号码' },
+          url: { label: '网址链接', placeholder: 'https://' },
+          password: { label: '密码', placeholder: '请输入密码' },
+          select: { label: '下拉选择', placeholder: '请选择', options: ['选项1', '选项2', '选项3'] },
+          radio: { label: '单选', options: ['选项A', '选项B', '选项C'] },
+          checkbox: { label: '多选', options: ['选项甲', '选项乙', '选项丙'] },
+          switch: { label: '开关' },
+          date: { label: '日期', placeholder: '选择日期' },
+          time: { label: '时间', placeholder: '选择时间' },
+          datetime: { label: '日期时间', placeholder: '选择日期和时间' },
+          textarea: { label: '多行文本', placeholder: '请输入内容...' },
+          file: { label: '文件上传', placeholder: '选择文件' },
+          range: { label: '评分', placeholder: '0-10' }
+        };
+
+        const config = defaults[type] || { label: '新字段', placeholder: '' };
+        return {
+          id: this.generateId(),
+          type,
+          label: config.label,
+          placeholder: config.placeholder || '',
+          required: false,
+          defaultValue: '',
+          options: config.options || [],
+          min: type === 'range' ? 0 : undefined,
+          max: type === 'range' ? 10 : undefined
+        };
+      }
+
+      handleDragStart(e) {
+        e.target.classList.add('dragging');
+        e.dataTransfer.setData('fieldType', e.target.dataset.type);
+        e.dataTransfer.effectAllowed = 'copy';
+      }
+
+      handleDragEnd(e) {
+        e.target.classList.remove('dragging');
+      }
+
+      handleDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy';
+        
+        const canvas = document.getElementById('formPreview');
+        const emptyState = canvas.querySelector('.form-empty');
+        if (emptyState) {
+          canvas.style.background = 'rgba(99, 102, 241, 0.05)';
+        }
+      }
+
+      handleDragLeave(e) {
+        const canvas = document.getElementById('formPreview');
+        const emptyState = canvas.querySelector('.form-empty');
+        if (emptyState) {
+          canvas.style.background = '';
+        }
+      }
+
+      handleDrop(e) {
+        e.preventDefault();
+        const canvas = document.getElementById('formPreview');
+        canvas.style.background = '';
+        
+        const fieldType = e.dataTransfer.getData('fieldType');
+        if (fieldType) {
+          const field = this.getDefaultField(fieldType);
+          this.fields.push(field);
+          this.saveToHistory();
+          this.renderForm();
+          this.selectField(field.id);
+        }
+      }
+
+      selectField(id) {
+        this.selectedFieldId = id;
+        this.renderForm();
+        this.renderPropertyPanel();
+      }
+
+      deselectField() {
+        this.selectedFieldId = null;
+        this.renderForm();
+        this.renderPropertyPanel();
+      }
+
+      deleteField(id) {
+        this.fields = this.fields.filter(f => f.id !== id);
+        if (this.selectedFieldId === id) {
+          this.selectedFieldId = null;
+        }
+        this.saveToHistory();
+        this.renderForm();
+        this.renderPropertyPanel();
+      }
+
+      duplicateField(id) {
+        const field = this.fields.find(f => f.id === id);
+        if (field) {
+          const newField = { ...field, id: this.generateId(), label: field.label + ' (副本)' };
+          const index = this.fields.findIndex(f => f.id === id);
+          this.fields.splice(index + 1, 0, newField);
+          this.saveToHistory();
+          this.renderForm();
+          this.selectField(newField.id);
+        }
+      }
+
+      moveField(id, direction) {
+        const index = this.fields.findIndex(f => f.id === id);
+        if (index === -1) return;
+        
+        const newIndex = direction === 'up' ? index - 1 : index + 1;
+        if (newIndex < 0 || newIndex >= this.fields.length) return;
+        
+        const temp = this.fields[index];
+        this.fields[index] = this.fields[newIndex];
+        this.fields[newIndex] = temp;
+        
+        this.saveToHistory();
+        this.renderForm();
+      }
+
+      renderForm() {
+        const preview = document.getElementById('formPreview');
+        
+        if (this.fields.length === 0) {
+          preview.innerHTML = `
+            <div class="form-empty">
+              <svg class="form-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M9 11l3 3L22 4"></path>
+                <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
+              </svg>
+              <h3 class="form-empty-title">开始创建表单</h3>
+              <p class="form-empty-desc">从左侧拖拽字段到此处开始设计</p>
+              <div class="quick-add">
+                <button class="quick-add-btn" onclick="formBuilder.quickAdd('text')">文本</button>
+                <button class="quick-add-btn" onclick="formBuilder.quickAdd('email')">邮箱</button>
+                <button class="quick-add-btn" onclick="formBuilder.quickAdd('select')">下拉</button>
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        if (this.mode === 'preview') {
+          this.renderPreviewMode(preview);
+        } else {
+          this.renderEditMode(preview);
+        }
+      }
+
+      renderEditMode(preview) {
+        let html = `<div class="form-title" style="font-size: 20px; font-weight: 600; margin-bottom: 24px; color: var(--text);">${this.formName}</div>`;
+        
+        this.fields.forEach((field, index) => {
+          const isSelected = field.id === this.selectedFieldId;
+          html += `
+            <div class="form-field ${isSelected ? 'selected' : ''}" 
+                 data-id="${field.id}"
+                 onclick="formBuilder.selectField('${field.id}')"
+                 ondblclick="formBuilder.focusFieldLabel('${field.id}')">
+              <div class="form-field-header">
+                <div class="form-field-label">
+                  ${field.label}
+                  ${field.required ? '<span class="required-mark">*</span>' : ''}
+                </div>
+                <div class="form-field-actions">
+                  <button class="field-action-btn" onclick="event.stopPropagation(); formBuilder.moveField('${field.id}', 'up')" title="上移">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="18 15 12 9 6 15"></polyline>
+                    </svg>
+                  </button>
+                  <button class="field-action-btn" onclick="event.stopPropagation(); formBuilder.moveField('${field.id}', 'down')" title="下移">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </button>
+                  <button class="field-action-btn" onclick="event.stopPropagation(); formBuilder.duplicateField('${field.id}')" title="复制">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
+                    </svg>
+                  </button>
+                  <button class="field-action-btn delete" onclick="event.stopPropagation(); formBuilder.deleteField('${field.id}')" title="删除">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              ${this.renderFieldInput(field)}
+            </div>
+          `;
+        });
+
+        preview.innerHTML = html;
+      }
+
+      renderPreviewMode(preview) {
+        let html = `<h2 class="preview-form-title">${this.formName}</h2>`;
+        html += `<p class="preview-form-desc">请填写以下表单信息</p>`;
+        
+        this.fields.forEach(field => {
+          html += `
+            <div class="form-field">
+              <div class="form-field-label">
+                ${field.label}
+                ${field.required ? '<span class="required-mark">*</span>' : ''}
+              </div>
+              ${this.renderFieldInput(field, true)}
+            </div>
+          `;
+        });
+
+        html += `<button type="button" class="preview-submit" onclick="formBuilder.submitForm()">提交表单</button>`;
+        preview.innerHTML = `<div class="preview-form">${html}</div>`;
+      }
+
+      renderFieldInput(field, forPreview = false) {
+        const disabled = forPreview ? '' : 'disabled';
+        
+        switch (field.type) {
+          case 'text':
+          case 'email':
+          case 'number':
+          case 'tel':
+          case 'url':
+          case 'password':
+            return `<input type="${field.type}" class="form-field-input" placeholder="${field.placeholder}" ${disabled}>`;
+          
+          case 'textarea':
+            return `<textarea class="form-field-input" placeholder="${field.placeholder}" rows="4" ${disabled}></textarea>`;
+          
+          case 'select':
+            const selectOptions = field.options.map(opt => `<option value="${opt}">${opt}</option>`).join('');
+            return `<select class="form-field-input" ${disabled}><option value="">${field.placeholder || '请选择'}</option>${selectOptions}</select>`;
+          
+          case 'radio':
+            return `<div class="field-options">
+              ${field.options.map(opt => `
+                <label class="field-option" style="flex-direction: row; gap: 10px; padding: 8px 0;">
+                  <input type="radio" name="${field.id}" value="${opt}" ${disabled}> ${opt}
+                </label>
+              `).join('')}
+            </div>`;
+          
+          case 'checkbox':
+            return `<div class="field-options">
+              ${field.options.map(opt => `
+                <label class="field-option" style="flex-direction: row; gap: 10px; padding: 8px 0;">
+                  <input type="checkbox" name="${field.id}" value="${opt}" ${disabled}> ${opt}
+                </label>
+              `).join('')}
+            </div>`;
+          
+          case 'switch':
+            return `<label style="display: flex; align-items: center; gap: 12px;">
+              <input type="checkbox" ${disabled}>
+              <span style="color: var(--text-secondary); font-size: 13px;">${field.placeholder || '开启/关闭'}</span>
+            </label>`;
+          
+          case 'date':
+          case 'time':
+          case 'datetime':
+            return `<input type="${field.type}" class="form-field-input" placeholder="${field.placeholder}" ${disabled}>`;
+          
+          case 'file':
+            return `<input type="file" class="form-field-input" ${disabled}>`;
+          
+          case 'range':
+            return `<input type="range" class="form-field-input" min="${field.min || 0}" max="${field.max || 10}" value="${field.defaultValue || 5}" ${disabled}>`;
+          
+          default:
+            return `<input type="text" class="form-field-input" placeholder="${field.placeholder}" ${disabled}>`;
+        }
+      }
+
+      renderPropertyPanel() {
+        const content = document.getElementById('propertyContent');
+        
+        if (!this.selectedFieldId) {
+          content.innerHTML = `
+            <div class="property-empty">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+              <p>选择字段以编辑属性</p>
+            </div>
+          `;
+          return;
+        }
+
+        const field = this.fields.find(f => f.id === this.selectedFieldId);
+        if (!field) return;
+
+        const hasOptions = ['select', 'radio', 'checkbox'].includes(field.type);
+
+        content.innerHTML = `
+          <div class="property-section">
+            <h3 class="property-section-title">基础属性</h3>
+            
+            <div class="property-field">
+              <label class="property-label">字段标签</label>
+              <input type="text" class="property-input" id="propLabel" value="${field.label}" 
+                     onchange="formBuilder.updateField('label', this.value)">
+            </div>
+            
+            <div class="property-field">
+              <label class="property-label">占位文本</label>
+              <input type="text" class="property-input" id="propPlaceholder" value="${field.placeholder}" 
+                     onchange="formBuilder.updateField('placeholder', this.value)">
+            </div>
+            
+            <div class="property-field">
+              <label class="property-label">默认值</label>
+              <input type="text" class="property-input" id="propDefault" value="${field.defaultValue || ''}" 
+                     onchange="formBuilder.updateField('defaultValue', this.value)">
+            </div>
+            
+            <div class="property-toggle">
+              <span class="property-label" style="margin: 0;">必填字段</span>
+              <div class="toggle-switch ${field.required ? 'active' : ''}" 
+                   onclick="formBuilder.toggleRequired()"></div>
+            </div>
+          </div>
+
+          ${hasOptions ? `
+          <div class="property-section">
+            <h3 class="property-section-title">选项配置</h3>
+            <div class="field-options" id="optionsContainer">
+              ${field.options.map((opt, i) => `
+                <div class="field-option">
+                  <input type="text" value="${opt}" 
+                         onchange="formBuilder.updateOption(${i}, this.value)">
+                  <button class="remove-option" onclick="formBuilder.removeOption(${i})">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+              `).join('')}
+            </div>
+            <button class="add-option-btn" onclick="formBuilder.addOption()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              添加选项
+            </button>
+          </div>
+          ` : ''}
+
+          ${field.type === 'range' ? `
+          <div class="property-section">
+            <h3 class="property-section-title">范围配置</h3>
+            <div class="property-field">
+              <label class="property-label">最小值</label>
+              <input type="number" class="property-input" value="${field.min || 0}" 
+                     onchange="formBuilder.updateField('min', parseInt(this.value))">
+            </div>
+            <div class="property-field">
+              <label class="property-label">最大值</label>
+              <input type="number" class="property-input" value="${field.max || 10}" 
+                     onchange="formBuilder.updateField('max', parseInt(this.value))">
+            </div>
+          </div>
+          ` : ''}
+        `;
+      }
+
+      updateField(prop, value) {
+        const field = this.fields.find(f => f.id === this.selectedFieldId);
+        if (field) {
+          field[prop] = value;
+          this.saveToHistory();
+          this.renderForm();
+        }
+      }
+
+      toggleRequired() {
+        const field = this.fields.find(f => f.id === this.selectedFieldId);
+        if (field) {
+          field.required = !field.required;
+          this.saveToHistory();
+          this.renderForm();
+          this.renderPropertyPanel();
+        }
+      }
+
+      addOption() {
+        const field = this.fields.find(f => f.id === this.selectedFieldId);
+        if (field && field.options) {
+          field.options.push(`新选项${field.options.length + 1}`);
+          this.saveToHistory();
+          this.renderPropertyPanel();
+          this.renderForm();
+        }
+      }
+
+      removeOption(index) {
+        const field = this.fields.find(f => f.id === this.selectedFieldId);
+        if (field && field.options && field.options.length > 1) {
+          field.options.splice(index, 1);
+          this.saveToHistory();
+          this.renderPropertyPanel();
+          this.renderForm();
+        }
+      }
+
+      updateOption(index, value) {
+        const field = this.fields.find(f => f.id === this.selectedFieldId);
+        if (field && field.options) {
+          field.options[index] = value;
+          this.saveToHistory();
+          this.renderForm();
+        }
+      }
+
+      quickAdd(type) {
+        const field = this.getDefaultField(type);
+        this.fields.push(field);
+        this.saveToHistory();
+        this.renderForm();
+        this.selectField(field.id);
+      }
+
+      focusFieldLabel(id) {
+        setTimeout(() => {
+          const labelInput = document.getElementById('propLabel');
+          if (labelInput) labelInput.focus();
+        }, 0);
+      }
+
+      switchMode(mode) {
+        this.mode = mode;
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.mode === mode);
+        });
+        document.querySelector('.app').classList.toggle('preview-mode', mode === 'preview');
+        this.renderForm();
+      }
+
+      submitForm() {
+        const data = {};
+        this.fields.forEach(field => {
+          const input = document.querySelector(`.preview-form [name="${field.id}"]`);
+          if (input) {
+            if (input.type === 'checkbox') {
+              data[field.label] = input.checked;
+            } else if (input.type === 'radio') {
+              const checked = document.querySelector(`.preview-form [name="${field.id}"]:checked`);
+              data[field.label] = checked ? checked.value : '';
+            } else {
+              data[field.label] = input.value;
+            }
+          } else {
+            const el = document.querySelector(`.preview-form .form-field-input`);
+            if (el) {
+              data[field.label] = el.value;
+            }
+          }
+        });
+
+        this.saveSubmission(data);
+        this.showToast('表单提交成功！', 'success');
+        this.switchMode('edit');
+      }
+
+      saveSubmission(data) {
+        const submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+        submissions.unshift({
+          id: Date.now(),
+          formName: this.formName,
+          data,
+          timestamp: new Date().toISOString()
+        });
+        
+        // Keep only last 100 submissions
+        if (submissions.length > 100) {
+          submissions.pop();
+        }
+        
+        localStorage.setItem('formSubmissions', JSON.stringify(submissions));
+      }
+
+      toggleDataPanel() {
+        const panel = document.getElementById('dataPanel');
+        panel.classList.toggle('active');
+        if (panel.classList.contains('active')) {
+          this.renderDataPanel();
+        }
+      }
+
+      renderDataPanel() {
+        const content = document.getElementById('dataContent');
+        const submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+        const formSubmissions = submissions.filter(s => s.formName === this.formName);
+
+        if (formSubmissions.length === 0) {
+          content.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48" style="margin-bottom: 12px; opacity: 0.5;">
+                <path d="M9 11l3 3L22 4"></path>
+                <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
+              </svg>
+              <p>暂无提交数据</p>
+            </div>
+          `;
+          return;
+        }
+
+        content.innerHTML = `
+          <div class="data-stats">
+            <div class="stat-card">
+              <div class="stat-value">${formSubmissions.length}</div>
+              <div class="stat-label">总提交数</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">${new Set(formSubmissions.map(s => s.timestamp.split('T')[0])).size}</div>
+              <div class="stat-label">提交天数</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">${Object.keys(formSubmissions[0]?.data || {}).length}</div>
+              <div class="stat-label">表单字段</div>
+            </div>
+          </div>
+          <div class="data-list">
+            ${formSubmissions.slice(0, 20).map(sub => `
+              <div class="data-item">
+                <div class="data-item-header">
+                  <span style="font-size: 13px; font-weight: 500;">提交 #${sub.id}</span>
+                  <span class="data-item-time">${new Date(sub.timestamp).toLocaleString('zh-CN')}</span>
+                </div>
+                <div class="data-item-fields">
+                  ${Object.entries(sub.data).map(([key, value]) => `
+                    <div class="data-item-field">
+                      <span class="data-item-field-label">${key}:</span>
+                      <span class="data-item-field-value">${value || '(空)'}</span>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      saveToHistory() {
+        // Remove future states if we're not at the end
+        if (this.historyIndex < this.history.length - 1) {
+          this.history = this.history.slice(0, this.historyIndex + 1);
+        }
+        
+        this.history.push(JSON.stringify(this.fields));
+        this.historyIndex = this.history.length - 1;
+        
+        // Limit history size
+        if (this.history.length > 50) {
+          this.history.shift();
+          this.historyIndex--;
+        }
+      }
+
+      undo() {
+        if (this.historyIndex > 0) {
+          this.historyIndex--;
+          this.fields = JSON.parse(this.history[this.historyIndex]);
+          this.selectedFieldId = null;
+          this.renderForm();
+          this.renderPropertyPanel();
+          this.showToast('已撤销', 'success');
+        }
+      }
+
+      handleKeyboard(e) {
+        // Delete selected field
+        if ((e.key === 'Delete' || e.key === 'Backspace') && this.selectedFieldId && document.activeElement.tagName !== 'INPUT') {
+          e.preventDefault();
+          this.deleteField(this.selectedFieldId);
+        }
+        
+        // Escape to deselect
+        if (e.key === 'Escape') {
+          this.deselectField();
+        }
+        
+        // Ctrl/Cmd + S to save
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+          e.preventDefault();
+          this.saveForm();
+        }
+        
+        // Ctrl/Cmd + Z to undo
+        if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+          e.preventDefault();
+          this.undo();
+        }
+        
+        // Arrow keys to navigate fields
+        if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && this.selectedFieldId) {
+          e.preventDefault();
+          const index = this.fields.findIndex(f => f.id === this.selectedFieldId);
+          if (e.key === 'ArrowUp' && index > 0) {
+            this.selectField(this.fields[index - 1].id);
+          } else if (e.key === 'ArrowDown' && index < this.fields.length - 1) {
+            this.selectField(this.fields[index + 1].id);
+          }
+        }
+      }
+
+      saveForm() {
+        const formData = {
+          name: this.formName,
+          fields: this.fields,
+          updatedAt: new Date().toISOString()
+        };
+        
+        localStorage.setItem('currentForm', JSON.stringify(formData));
+        this.showToast('表单已保存', 'success');
+      }
+
+      loadFromStorage() {
+        const saved = localStorage.getItem('currentForm');
+        if (saved) {
+          try {
+            const data = JSON.parse(saved);
+            this.formName = data.name || '我的表单';
+            this.fields = data.fields || [];
+            document.getElementById('formName').value = this.formName;
+          } catch (e) {
+            console.error('Failed to load form:', e);
+          }
+        }
+      }
+
+      exportForm() {
+        const formData = {
+          name: this.formName,
+          fields: this.fields,
+          exportedAt: new Date().toISOString(),
+          version: '1.0'
+        };
+
+        const blob = new Blob([JSON.stringify(formData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${this.formName}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        
+        this.showToast('表单已导出为 JSON 文件', 'success');
+      }
+
+      clearForm() {
+        if (this.fields.length === 0) return;
+        
+        if (confirm('确定要清空所有字段吗？此操作不可撤销。')) {
+          this.fields = [];
+          this.selectedFieldId = null;
+          this.history = [];
+          this.historyIndex = -1;
+          this.renderForm();
+          this.renderPropertyPanel();
+          localStorage.removeItem('currentForm');
+          this.showToast('表单已清空', 'success');
+        }
+      }
+
+      showToast(message, type = 'success') {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `
+          <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            ${type === 'success' 
+              ? '<path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>'
+              : '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>'
+            }
+          </svg>
+          <span class="toast-message">${message}</span>
+        `;
+        
+        container.appendChild(toast);
+        
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      }
+    }
+
+    // Initialize
+    const formBuilder = new FormBuilder();
+  </script>
+</body>
+</html>
