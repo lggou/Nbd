@@ -1814,6 +1814,8 @@
     // Form Builder Application
     class FormBuilder {
       constructor() {
+        this.forms = [];
+        this.currentFormId = null;
         this.fields = [];
         this.selectedFieldId = null;
         this.history = [];
@@ -1826,8 +1828,14 @@
 
       init() {
         this.bindEvents();
-        this.loadFromStorage();
+        this.loadForms();
+        if (this.forms.length === 0) {
+          this.createNewForm();
+        } else {
+          this.selectForm(this.forms[0].id);
+        }
         this.renderForm();
+        this.renderFormList();
       }
 
       bindEvents() {
@@ -1856,11 +1864,9 @@
         document.getElementById('dataBtn').addEventListener('click', () => this.toggleDataPanel());
         document.getElementById('closeDataPanel').addEventListener('click', () => this.toggleDataPanel());
         document.getElementById('closePropertyPanel').addEventListener('click', () => this.deselectField());
-
-        // Form Name
-        document.getElementById('formName').addEventListener('input', (e) => {
-          this.formName = e.target.value;
-        });
+        document.getElementById('newFormBtn').addEventListener('click', () => this.createNewForm());
+        document.getElementById('createFormBtn').addEventListener('click', () => this.createNewForm());
+        document.getElementById('copyPreviewLinkBtn').addEventListener('click', () => this.copyPreviewLink());
 
         // Keyboard Shortcuts
         document.addEventListener('keydown', (e) => this.handleKeyboard(e));
@@ -1871,10 +1877,307 @@
             this.deselectField();
           }
         });
+
+        // Handle URL parameters for standalone preview
+        this.handleUrlParams();
       }
 
       generateId() {
         return 'field_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      }
+
+      generateFormId() {
+        return 'form_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      }
+
+      createNewForm() {
+        const newForm = {
+          id: this.generateFormId(),
+          name: `表单 ${this.forms.length + 1}`,
+          fields: [],
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+        
+        this.forms.push(newForm);
+        this.saveForms();
+        this.selectForm(newForm.id);
+        this.renderFormList();
+        this.showToast('新表单已创建', 'success');
+      }
+
+      selectForm(formId) {
+        const form = this.forms.find(f => f.id === formId);
+        if (form) {
+          this.currentFormId = formId;
+          this.formName = form.name;
+          this.fields = [...form.fields];
+          this.selectedFieldId = null;
+          this.history = [];
+          this.historyIndex = -1;
+          this.renderForm();
+          this.renderPropertyPanel();
+          this.renderFormList();
+        }
+      }
+
+      deleteForm(formId) {
+        if (this.forms.length <= 1) {
+          this.showToast('至少保留一个表单', 'error');
+          return;
+        }
+
+        if (confirm('确定要删除这个表单吗？此操作不可撤销。')) {
+          const index = this.forms.findIndex(f => f.id === formId);
+          if (index !== -1) {
+            this.forms.splice(index, 1);
+            this.saveForms();
+            
+            if (this.currentFormId === formId) {
+              const newIndex = index < this.forms.length ? index : this.forms.length - 1;
+              this.selectForm(this.forms[newIndex].id);
+            }
+            
+            this.renderFormList();
+            this.showToast('表单已删除', 'success');
+          }
+        }
+      }
+
+      renameForm(formId, newName) {
+        const form = this.forms.find(f => f.id === formId);
+        if (form) {
+          form.name = newName;
+          form.updatedAt = new Date().toISOString();
+          this.saveForms();
+          
+          if (this.currentFormId === formId) {
+            this.formName = newName;
+          }
+          
+          this.renderFormList();
+        }
+      }
+
+      renderFormList() {
+        const container = document.getElementById('formList');
+        
+        let html = '';
+        this.forms.forEach(form => {
+          const isActive = form.id === this.currentFormId;
+          const submissionCount = this.getSubmissionCount(form.id);
+          
+          html += `
+            <div class="form-list-item ${isActive ? 'active' : ''}" data-id="${form.id}">
+              <div class="form-list-item-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 11l3 3L22 4"></path>
+                  <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
+                </svg>
+              </div>
+              <div class="form-list-item-info">
+                <div class="form-list-item-name" contenteditable="true" data-form-id="${form.id}" 
+                     onblur="formBuilder.handleFormNameBlur(this)">${form.name}</div>
+                <div class="form-list-item-meta">${submissionCount} 条提交</div>
+              </div>
+              <div class="form-list-item-actions">
+                <button class="form-list-item-action-btn" onclick="formBuilder.openStandalonePreview('${form.id}')" title="预览">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                  </svg>
+                </button>
+                <button class="form-list-item-action-btn delete" onclick="formBuilder.deleteForm('${form.id}')" title="删除">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          `;
+        });
+        
+        html += `
+          <button class="create-form-btn" id="createFormBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            新建表单
+          </button>
+        `;
+        
+        container.innerHTML = html;
+        
+        // Re-bind the click event for the new create button
+        document.getElementById('createFormBtn').addEventListener('click', () => this.createNewForm());
+        
+        // Bind click events for form items
+        container.querySelectorAll('.form-list-item').forEach(item => {
+          item.addEventListener('click', (e) => {
+            if (!e.target.closest('.form-list-item-action-btn') && !e.target.isContentEditable) {
+              this.selectForm(item.dataset.id);
+            }
+          });
+        });
+      }
+
+      handleFormNameBlur(element) {
+        const formId = element.dataset.formId;
+        const newName = element.textContent.trim() || '未命名表单';
+        this.renameForm(formId, newName);
+      }
+
+      getSubmissionCount(formId) {
+        const submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
+        return submissions.filter(s => s.formId === formId).length;
+      }
+
+      loadForms() {
+        const saved = localStorage.getItem('forms');
+        if (saved) {
+          try {
+            this.forms = JSON.parse(saved);
+          } catch (e) {
+            console.error('Failed to load forms:', e);
+            this.forms = [];
+          }
+        } else {
+          this.forms = [];
+        }
+      }
+
+      saveForms() {
+        localStorage.setItem('forms', JSON.stringify(this.forms));
+      }
+
+      handleUrlParams() {
+        const params = new URLSearchParams(window.location.search);
+        const formId = params.get('form');
+        const preview = params.get('preview');
+        
+        if (formId && preview === 'true') {
+          this.loadForms();
+          const form = this.forms.find(f => f.id === formId);
+          if (form) {
+            this.currentFormId = formId;
+            this.formName = form.name;
+            this.fields = [...form.fields];
+            this.openStandalonePreview(formId);
+          }
+        }
+      }
+
+      copyPreviewLink() {
+        const previewUrl = this.getPreviewUrl();
+        navigator.clipboard.writeText(previewUrl).then(() => {
+          this.showToast('预览链接已复制到剪贴板', 'success');
+        }).catch(() => {
+          this.showToast('复制失败，请手动复制', 'error');
+        });
+      }
+
+      getPreviewUrl() {
+        const baseUrl = window.location.origin + window.location.pathname;
+        return `${baseUrl}?form=${this.currentFormId}&preview=true`;
+      }
+
+      openStandalonePreview(formId) {
+        const form = this.forms.find(f => f.id === formId);
+        if (!form) return;
+
+        document.getElementById('app').style.display = 'none';
+        document.getElementById('previewPage').style.display = 'flex';
+        
+        this.currentFormId = formId;
+        this.formName = form.name;
+        this.fields = [...form.fields];
+        
+        this.renderStandalonePreview();
+      }
+
+      closeStandalonePreview() {
+        document.getElementById('previewPage').style.display = 'none';
+        document.getElementById('app').style.display = 'flex';
+        this.renderForm();
+      }
+
+      renderStandalonePreview() {
+        const container = document.getElementById('standaloneFormPreview');
+        
+        if (this.fields.length === 0) {
+          container.innerHTML = `
+            <div style="text-align: center; padding: 40px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48" style="margin-bottom: 12px; opacity: 0.5;">
+                <path d="M9 11l3 3L22 4"></path>
+                <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
+              </svg>
+              <p style="color: #6b7280;">此表单暂无字段</p>
+            </div>
+          `;
+          return;
+        }
+
+        let html = `
+          <h2 class="preview-page-title">${this.formName}</h2>
+          <p class="preview-page-desc">请填写以下表单信息</p>
+        `;
+
+        this.fields.forEach(field => {
+          html += `
+            <div class="form-field">
+              <div class="form-field-label">
+                ${field.label}
+                ${field.required ? '<span class="required-mark">*</span>' : ''}
+              </div>
+              ${this.renderFieldInput(field, true)}
+            </div>
+          `;
+        });
+
+        html += `
+          <button type="button" class="preview-page-submit" onclick="formBuilder.submitStandaloneForm()">提交表单</button>
+          <button type="button" style="width: 100%; margin-top: 12px; padding: 12px; background: transparent; border: 1px solid #e5e7eb; border-radius: 12px; color: #6b7280; font-size: 14px; cursor: pointer; transition: 150ms; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="formBuilder.closeStandalonePreview()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <path d="M10 19l7-7m0 0l-7-7m7 7H3"></path>
+            </svg>
+            返回设计器
+          </button>
+        `;
+
+        container.innerHTML = html;
+      }
+
+      submitStandaloneForm() {
+        const data = {};
+        const form = document.getElementById('standaloneFormPreview');
+        
+        this.fields.forEach(field => {
+          const inputs = form.querySelectorAll('[data-field-id="' + field.id + '"]');
+          if (inputs.length > 0) {
+            if (field.type === 'checkbox') {
+              data[field.label] = Array.from(inputs).filter(i => i.checked).map(i => i.value);
+            } else if (field.type === 'radio') {
+              const checked = form.querySelector('[name="' + field.id + '"]:checked');
+              data[field.label] = checked ? checked.value : '';
+            } else {
+              const input = inputs[0];
+              data[field.label] = input ? input.value : '';
+            }
+          } else {
+            const input = form.querySelector('.form-field-input');
+            if (input) {
+              data[field.label] = input.value;
+            }
+          }
+        });
+
+        this.saveSubmission(data);
+        this.showToast('表单提交成功！', 'success');
+        
+        // Reset form
+        this.renderStandalonePreview();
       }
 
       getDefaultField(type) {
@@ -2358,6 +2661,7 @@
         const submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
         submissions.unshift({
           id: Date.now(),
+          formId: this.currentFormId,
           formName: this.formName,
           data,
           timestamp: new Date().toISOString()
@@ -2382,7 +2686,7 @@
       renderDataPanel() {
         const content = document.getElementById('dataContent');
         const submissions = JSON.parse(localStorage.getItem('formSubmissions') || '[]');
-        const formSubmissions = submissions.filter(s => s.formName === this.formName);
+        const formSubmissions = submissions.filter(s => s.formId === this.currentFormId);
 
         if (formSubmissions.length === 0) {
           content.innerHTML = `
@@ -2497,34 +2801,24 @@
       }
 
       saveForm() {
-        const formData = {
-          name: this.formName,
-          fields: this.fields,
-          updatedAt: new Date().toISOString()
-        };
-        
-        localStorage.setItem('currentForm', JSON.stringify(formData));
-        this.showToast('表单已保存', 'success');
-      }
-
-      loadFromStorage() {
-        const saved = localStorage.getItem('currentForm');
-        if (saved) {
-          try {
-            const data = JSON.parse(saved);
-            this.formName = data.name || '我的表单';
-            this.fields = data.fields || [];
-            document.getElementById('formName').value = this.formName;
-          } catch (e) {
-            console.error('Failed to load form:', e);
-          }
+        const formIndex = this.forms.findIndex(f => f.id === this.currentFormId);
+        if (formIndex !== -1) {
+          this.forms[formIndex].fields = [...this.fields];
+          this.forms[formIndex].name = this.formName;
+          this.forms[formIndex].updatedAt = new Date().toISOString();
+          this.saveForms();
+          this.showToast('表单已保存', 'success');
         }
       }
 
       exportForm() {
+        const form = this.forms.find(f => f.id === this.currentFormId);
+        if (!form) return;
+        
         const formData = {
-          name: this.formName,
-          fields: this.fields,
+          id: form.id,
+          name: form.name,
+          fields: form.fields,
           exportedAt: new Date().toISOString(),
           version: '1.0'
         };
@@ -2533,7 +2827,7 @@
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `${this.formName}.json`;
+        a.download = `${form.name}.json`;
         a.click();
         URL.revokeObjectURL(url);
         
@@ -2550,7 +2844,7 @@
           this.historyIndex = -1;
           this.renderForm();
           this.renderPropertyPanel();
-          localStorage.removeItem('currentForm');
+          this.saveForm();
           this.showToast('表单已清空', 'success');
         }
       }
