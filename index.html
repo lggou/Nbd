@@ -213,6 +213,167 @@
       color: var(--text-secondary);
     }
 
+    /* Form List */
+    .form-list-section {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .form-list-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      cursor: pointer;
+    }
+
+    .form-list-header:hover {
+      background: var(--surface-hover);
+    }
+
+    .form-list-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+    }
+
+    .form-list-content {
+      padding: 0 12px 12px 12px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .form-list-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+      margin-bottom: 6px;
+    }
+
+    .form-list-item:hover {
+      border-color: var(--border-hover);
+      background: var(--surface-hover);
+    }
+
+    .form-list-item.active {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.1);
+    }
+
+    .form-list-item-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface);
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+
+    .form-list-item.active .form-list-item-icon {
+      color: var(--primary);
+    }
+
+    .form-list-item-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .form-list-item-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .form-list-item-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .form-list-item-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .form-list-item-actions {
+      display: flex;
+      gap: 4px;
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .form-list-item:hover .form-list-item-actions {
+      opacity: 1;
+    }
+
+    .form-list-item-action-btn {
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
+    }
+
+    .form-list-item-action-btn:hover {
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .form-list-item-action-btn.delete:hover {
+      color: var(--error);
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .form-list-item-action-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .create-form-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      padding: 10px 12px;
+      background: transparent;
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      font-size: 13px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .create-form-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: rgba(99, 102, 241, 0.05);
+    }
+
+    .create-form-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
     .sidebar-content {
       flex: 1;
       overflow-y: auto;
@@ -1126,6 +1287,87 @@
       background: var(--border-hover);
     }
 
+    /* Standalone Preview Page */
+    .preview-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      background: linear-gradient(135deg, #09090B 0%, #18181B 100%);
+    }
+
+    .preview-page-form {
+      background: white;
+      border-radius: 20px;
+      padding: 48px;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .preview-page-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+
+    .preview-page-desc {
+      font-size: 15px;
+      color: #6b7280;
+      margin-bottom: 32px;
+    }
+
+    .preview-page .form-field {
+      background: #f9fafb;
+      border-color: #e5e7eb;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .preview-page .form-field:hover {
+      border-color: #d1d5db;
+    }
+
+    .preview-page .form-field-label {
+      color: #374151;
+      font-weight: 500;
+    }
+
+    .preview-page .form-field-input {
+      background: white;
+      border-color: #d1d5db;
+      color: #1a1a1a;
+    }
+
+    .preview-page .form-field-input:focus {
+      border-color: #6366F1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .preview-page .form-field-input::placeholder {
+      color: #9ca3af;
+    }
+
+    .preview-page-submit {
+      width: 100%;
+      padding: 14px 24px;
+      background: #6366F1;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 150ms ease-out;
+    }
+
+    .preview-page-submit:hover {
+      background: #818CF8;
+      transform: translateY(-1px);
+    }
+
     /* Responsive */
     @media (max-width: 1024px) {
       .sidebar {
@@ -1173,7 +1415,13 @@
           </svg>
           <span>智能表单</span>
         </div>
-        <input type="text" class="form-name-input" id="formName" value="我的表单" placeholder="表单名称">
+        <button class="btn btn-secondary" id="newFormBtn" style="padding: 6px 12px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          新建
+        </button>
       </div>
       
       <div class="toolbar-center">
@@ -1182,6 +1430,14 @@
       </div>
       
       <div class="toolbar-right">
+        <button class="btn btn-secondary" id="copyPreviewLinkBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          预览链接
+        </button>
         <button class="btn btn-secondary" id="dataBtn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path>
@@ -1211,8 +1467,26 @@
 
     <!-- Main Content -->
     <main class="main-content">
-      <!-- Left Sidebar - Field Library -->
+      <!-- Left Sidebar - Form List & Field Library -->
       <aside class="sidebar" id="sidebar">
+        <!-- Form List Section -->
+        <div class="form-list-section">
+          <div class="form-list-header">
+            <span class="form-list-title">表单列表</span>
+          </div>
+          <div class="form-list-content" id="formList">
+            <!-- Form items will be rendered here -->
+            <button class="create-form-btn" id="createFormBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              新建表单
+            </button>
+          </div>
+        </div>
+
+        <!-- Field Library Section -->
         <div class="sidebar-header">
           <h2 class="sidebar-title">字段组件</h2>
         </div>
@@ -1526,6 +1800,13 @@
       <div class="data-content" id="dataContent">
         <!-- Data stats and list -->
       </div>
+    </div>
+  </div>
+
+  <!-- Standalone Preview Page Container -->
+  <div class="preview-page" id="previewPage" style="display: none;">
+    <div class="preview-page-form" id="standaloneFormPreview">
+      <!-- Form preview will be rendered here -->
     </div>
   </div>
 
